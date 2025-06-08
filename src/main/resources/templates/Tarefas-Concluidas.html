@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Tarefas Concluídas</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/css/TarefasConcluidas.css">
+
+        <script>
+            function confirmarExclusao() {
+                return confirm("Tem certeza de que deseja excluir esta tarefa?");
+            }
+
+            function confirmarLogout() {
+                return confirm("Tem certeza de que deseja Sair?");
+            }
+        </script>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="/">Gerenciador de Tarefas</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <form class="form-inline my-2 my-lg-0" th:action="@{/usuario/tarefa/listar}" method="get">
+                <input class="form-control mr-sm-2" type="text" name="query" th:value="${query}" placeholder="Pesquisar Tarefas">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Pesquisar</button>
+            </form>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/usuario/logout}"   onclick="return confirmarLogout();">Sair</a>
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </nav>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h1>Tarefas Concluídas</h1>
+                </div>
+                <div class="col-md-6 text-right">
+                    <a th:href="@{/usuario/tarefa/listar}" class="btn btn-primary">Voltar à Lista de Tarefas</a>
+                    <a th:href="@{/usuario/tarefa/nova}" class="btn btn-success">Adicionar Nova Tarefa</a>
+
+                </div>
+            </div>
+            <!-- Mensagem de Sucesso -->
+            <div th:if="${mensagemSucesso}" class="alert alert-success mt-3" role="alert">
+                <span th:text="${mensagemSucesso}"></span>
+            </div>
+
+
+            <div class="row mt-3">
+                <div class="col-md-12">
+                    <div class="card-columns">
+                        <div th:each="tarefa : ${tarefas}">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title" th:text="${tarefa.titulo}"></h5>
+                                    <p class="card-descricao" th:text="${tarefa.descricao}"></p>
+                                    <p class="card-text"><strong>Data:</strong> <span th:text="${tarefa.data}"></span></p>
+                                    <p class="card-text"><strong>Categoria:</strong> <span th:text="${tarefa.categoria}"></span></p>
+                                    <form th:action="@{/usuario/tarefa/marcarPendente/{id}(id=${tarefa.id})}" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-success btn-sm"> Marcar Pendente</button>
+                                    </form>
+                                    <a th:href="@{/usuario/tarefa/editarConcluida/{id}(id=${tarefa.id})}"
+                                       class="btn btn-primary btn-sm ml-2">Editar</a>
+                                    <form th:action="@{/usuario/tarefa/excluirTarefaConcluida/{id}(id=${tarefa.id})}" method="post" class="d-inline" onsubmit="return confirmarExclusao();">
+                                        <button type="submit" class="btn btn-danger btn-sm ml-2">Excluir</button>
+                                    </form>
+                                    <a th:href="@{/usuario/tarefa/apresentar/{id}(id=${tarefa.id})}" class="btn btn-info btn-sm ml-2">Ver Tarefa</a>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    </body>
+</html>
